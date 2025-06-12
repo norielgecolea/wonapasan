@@ -22,7 +22,7 @@ export default function Home() {
 
             <Image
               src="/wonapasan/won_logo.png" // or a remote URL
-              alt="Example Image"
+              alt=""
               width={200} // required
               height={200} // required
               className="h-32 w-auto my-5"
