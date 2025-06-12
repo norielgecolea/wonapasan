@@ -54,7 +54,7 @@ export default function ManageTeam() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
     {
       id: "1",
-      name: "Noriel Gecolea",
+      name: "Noriel Fernando D. Gecolea",
       email: "norielgecolea23@gmail.com",
       phone: "(555) 123-4567",
       role: "Keys/Piano",
