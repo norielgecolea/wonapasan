@@ -1,0 +1,36 @@
+{
+  "Q2-2025": {
+    "quarter": "Q2 2025",
+    "months": ["April", "May", "June"],
+    "schedule": {
+      "June": [
+        {
+          "date": "June 2, 2025",
+          "assignments": {
+            "LEAD": "Abigail",
+            "GATHERING/DECLARATION": "Nors",
+            "BACKUP VOCALS": ["Cha", "Wenda"],
+            "KEYBOARD": "Nors",
+            "ELECTRIC GUITAR": "John Lester",
+            "RHYTHM GUITAR": "Isaac",
+            "BASS": "Charlemagne",
+            "DRUMS": "Noah"
+          }
+        },
+        {
+          "date": "June 9, 2025",
+          "assignments": {
+            "LEAD": "Abigail",
+            "GATHERING/DECLARATION": "Nors",
+            "BACKUP VOCALS": ["Cha", "Wenda"],
+            "KEYBOARD": "Nors",
+            "ELECTRIC GUITAR": "John Lester",
+            "RHYTHM GUITAR": "Isaac",
+            "BASS": "Charlemagne",
+            "DRUMS": "Noah"
+          }
+        }
+      ]
+    }
+  }
+}
