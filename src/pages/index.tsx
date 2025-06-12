@@ -21,7 +21,7 @@ export default function Home() {
           <div className="container mx-auto  justify-items-center sm:justify-items-center md:justify-items-center lg:flex lg:justify-center gap-10">
 
             <Image
-              src="/won logo.png" // or a remote URL
+              src="/won_logo.png" // or a remote URL
               alt="Example Image"
               width={200} // required
               height={200} // required
