@@ -13,7 +13,7 @@ export default function Home() {
       <Head>
         <title>WON APASAN WORSHIP TEAM</title>
         <meta name="description" content="Church worship team scheduling system" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/wonapasan/won_logo.png" />
       </Head>
 
       <main className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
