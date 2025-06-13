@@ -16,7 +16,7 @@ export default function Home() {
         <link rel="icon" href="/wonapasan/won_logo.png" />
       </Head>
 
-      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+      <main className="animate-gradientLoop bg-gradient-to-tr from-slate-900 via-blue-950 to-slate-900 bg-[length:200%_200%] overflow-hidden min-h-screen">
         <div className="container mx-auto px-4 py-8   ">
           <div className="container mx-auto  justify-items-center sm:justify-items-center md:justify-items-center lg:flex lg:justify-center gap-10">
 

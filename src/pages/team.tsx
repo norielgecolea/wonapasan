@@ -173,7 +173,7 @@ export default function ManageTeam() {
         <meta name="description" content="Manage your worship team members" />
       </Head>
       {/* w-full max-w-screen-xl mx-auto px-4 py-8          */}
-      <div className="  overflow-hidden min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+      <div className="animate-gradientLoop bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 bg-[length:400%_400%] overflow-hidden min-h-screen">
         <div className="container mx-auto px-4 py-8 min-w-full">
           {/* Header */}
           <div className="sm:flex block items-center justify-between mb-8">
