@@ -1,7 +1,9 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+
 
 @layer base {
   :root {
@@ -37,6 +39,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -46,4 +49,36 @@
   .container {
     @apply mx-auto px-4 md:px-6 lg:px-8 max-w-7xl w-full;
   }
+}
+
+/* Tailwind base overrides in your globals.css or component CSS */
+.rdp-dropdown {
+  background-color: #1e1e1e;
+  /* or `bg-gray-900` if using Tailwind class names */
+  color: #fff;
+  border: 1px solid #333;
+
+  margin: 10px;
+  padding: 10px;
+  border-radius: 0.375rem;
+}
+
+.rdp-dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+.rdp-dropdown::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+.rdp-dropdown::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 4px;
+  border: 2px solid #1e1e1e;
+}
+
+.rdp-dropdown {
+  scrollbar-color: #555 #1e1e1e;
+  /* For Firefox */
+  scrollbar-width: thin;
 }

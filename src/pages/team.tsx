@@ -12,6 +12,16 @@ import { Users, Plus, Edit, Trash2, Mail, Phone, Calendar, ArrowLeft } from "luc
 import Link from "next/link"
 import { supabase } from '@/lib/supabase'
 
+import { BirthdayPicker } from "../lib/Birthdaypicker";
+
+import { format } from "date-fns";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
+
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
+
+
 interface TeamMember {
   id: string
   name: string
@@ -21,7 +31,7 @@ interface TeamMember {
   instruments: string[]
   availability: string
   notes: string
-  joinDate: string
+  Birthday: string
   status: "active" | "inactive"
 }
 
@@ -75,8 +85,20 @@ export default function ManageTeam() {
 
 
 
+  const [birthday, setBirthday] = useState<Date | undefined>();
+
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelected(date);
+    setFormData((prev) => ({
+      ...prev,
+      Birthday: date ? date.toLocaleDateString("en-CA") : "", // YYYY-MM-DD in local time
+    }));
+  };
 
 
+
+
+  const [selected, setSelected] = useState<Date | undefined>();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditingDialogOpen, setIsEditingDialogOpen] = useState(false)
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null)
@@ -88,6 +110,7 @@ export default function ManageTeam() {
     instruments: [] as string[],
     availability: "",
     notes: "",
+    Birthday: "",
     status: "active" as "active" | "inactive"
   })
 
@@ -100,6 +123,7 @@ export default function ManageTeam() {
       instruments: [],
       availability: "",
       notes: "",
+      Birthday: "",
       status: "active"
     })
   }
@@ -108,20 +132,28 @@ export default function ManageTeam() {
     const newMember: TeamMember = {
       id: Date.now().toString(),
       ...formData,
-      joinDate: new Date().toISOString().split("T")[0],
     };
 
-    // Update local state immediately
-    setTeamMembers([...teamMembers, newMember]);
+    // Optimistically update UI
+    setTeamMembers((prev) => [...prev, newMember]);
 
-    // Save to Supabase
-    const { error } = await supabase.from("worshipteam_members").insert([newMember]);
+    // Insert into Supabase
+    const { error } = await supabase
+      .from("worshipteam_members")
+      .insert([newMember]);
 
     if (error) {
       console.error("Error inserting member into Supabase:", error.message);
+
+      // Optionally: Roll back optimistic update
+      setTeamMembers((prev) =>
+        prev.filter((member) => member.id !== newMember.id)
+      );
+
       return;
     }
 
+    // Close dialog and reset form
     setIsAddDialogOpen(false);
     resetForm();
   };
@@ -183,6 +215,7 @@ export default function ManageTeam() {
       instruments: member.instruments,
       availability: member.availability,
       notes: member.notes,
+      Birthday: member.Birthday,
       status: member.status
     })
   }
@@ -309,6 +342,38 @@ export default function ManageTeam() {
                     />
                   </div>
 
+                  <div className="space-y-2">
+                    <label className="block font-medium">Birthday</label>
+
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left font-normal"
+                        >
+                          <Calendar className="mr-2 h-4 w-4" />
+                          {selected ? format(selected, "PPP") : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+
+                      <PopoverContent className="w-auto  p-5">
+                        <DayPicker
+                          mode="single"
+                          selected={selected}
+                          onSelect={handleDateSelect}
+                          captionLayout="dropdown"
+                          fromYear={1900}
+                          toYear={new Date().getFullYear()}
+                          weekStartsOn={0}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+
+
+
+
                   <div>
                     <Label htmlFor="notes">Notes</Label>
                     <Textarea
@@ -387,7 +452,7 @@ export default function ManageTeam() {
                   </div>
                   <div className="flex items-center gap-2 text-blue-200 text-sm">
                     <Calendar className="w-4 h-4" />
-                    Joined {new Date(member.joinDate).toLocaleDateString()}
+                    Bithday {new Date(member.Birthday).toLocaleDateString()}
                   </div>
 
                   <div>
@@ -500,6 +565,49 @@ export default function ManageTeam() {
                             />
                           </div>
 
+
+                          <div className="space-y-2">
+                            <label className="block font-medium">Birthday</label>
+
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  className="w-full justify-start text-left font-normal"
+                                >
+                                  <Calendar className="mr-2 h-4 w-4" />
+                                  {selected ? format(selected, "PPP") : "Pick a date"}
+                                </Button>
+                              </PopoverTrigger>
+
+                              <PopoverContent className="w-auto  p-5">
+                                <DayPicker
+                                  mode="single"
+                                  selected={selected}
+                                  onSelect={handleDateSelect}
+                                  captionLayout="dropdown"
+                                  fromYear={1900}
+                                  toYear={new Date().getFullYear()}
+                                  weekStartsOn={0}
+                                />
+                              </PopoverContent>
+                            </Popover>
+                          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                           <div>
                             <Label htmlFor="edit-status">Status</Label>
                             <Select value={formData.status} onValueChange={(value: "active" | "inactive") => setFormData(prev => ({ ...prev, status: value }))}>
@@ -524,7 +632,7 @@ export default function ManageTeam() {
                           </div>
 
                           <div className="flex justify-end gap-2">
-                            <Button variant="outline" onClick={ () =>  setIsEditingDialogOpen(false)}>
+                            <Button variant="outline" onClick={() => setIsEditingDialogOpen(false)}>
                               Cancel
                             </Button>
                             <Button onClick={handleEditMember}>
