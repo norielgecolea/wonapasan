@@ -1,5 +1,5 @@
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import Head from "next/head"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Calendar, Edit, Plus } from "lucide-react"
 import Link from "next/link"
-import scheduleJson  from "@/data/schedule.json";
+
 
 const mockScheduleData = {
   
@@ -25,11 +25,26 @@ const roleColors = {
 }
 
 export default function Schedule() {
-  const [selectedQuarter, setSelectedQuarter] = useState("Q2-2025")
-  const [selectedMonth, setSelectedMonth] = useState("June")
-  
-  const currentData = scheduleJson[selectedQuarter]
-  const scheduleData = currentData?.schedule[selectedMonth] || []
+  const [selectedQuarter, setSelectedQuarter] = useState("Q2-2025");
+  const [selectedMonth, setSelectedMonth] = useState("June");
+  const [scheduleJson, setScheduleJson] = useState<any>(null); // type as needed
+
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        const res = await fetch("/data/schedule.json");
+        const json = await res.json();
+        setScheduleJson(json);
+      } catch (err) {
+        console.error("Failed to load schedule:", err);
+      }
+    };
+
+    fetchSchedule();
+  }, []);
+
+  const currentData = scheduleJson?.[selectedQuarter];
+  const scheduleData = currentData?.schedule[selectedMonth] || [];
 
   return (
     <>

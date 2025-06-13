@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import Head from "next/head"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
 import { Users, Plus, Edit, Trash2, Mail, Phone, Calendar, ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { supabase } from '@/lib/supabase'
 
 interface TeamMember {
   id: string
@@ -51,46 +52,33 @@ const instruments = [
 ]
 
 export default function ManageTeam() {
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
-    {
-      id: "1",
-      name: "Noriel Fernando D. Gecolea",
-      email: "norielgecolea23@gmail.com",
-      phone: "(555) 123-4567",
-      role: "Keys/Piano",
-      instruments: ["Vocals", "Acoustic Guitar"],
-      availability: "Sundays",
-      notes: "asdasd",
-      joinDate: "2023-01-15",
-      status: "active"
-    },
-    {
-      id: "2",
-      name: "Mark Reyes",
-      email: "Mark Reyes@church.com",
-      phone: "(555) 234-5678",
-      role: "Worship Leader",
-      instruments: ["Electric Guitar", "Bass Guitar","Vocals"],
-      availability: "Sundays only",
-      notes: "Prefers contemporary songs",
-      joinDate: "2023-03-20",
-      status: "inactive"
-    },
-    {
-      id: "3",
-      name: "John Lester Aguila",
-      email: "emily@church.com",
-      phone: "(555) 345-6789",
-      role: "Sound Tech",
-      instruments: ["Piano", "Keys"],
-      availability: "Flexible schedule",
-      notes: "Classical training background",
-      joinDate: "2023-02-10",
-      status: "active"
-    }
-  ])
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+
+  useEffect(() => {
+    const fetchTeamMembers = async () => {
+      const { data, error } = await supabase
+        .from('worshipteam_members')
+        .select('*');
+
+
+      if (error) {
+        console.error("Fetch error:", error);
+      } else {
+        setTeamMembers(data || []);
+      }
+    };
+
+    fetchTeamMembers();
+  }, []);
+
+
+
+
+
+
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isEditingDialogOpen, setIsEditingDialogOpen] = useState(false)
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null)
   const [formData, setFormData] = useState({
     name: "",
@@ -116,32 +104,74 @@ export default function ManageTeam() {
     })
   }
 
-  const handleAddMember = () => {
+  const handleAddMember = async () => {
     const newMember: TeamMember = {
       id: Date.now().toString(),
       ...formData,
-      joinDate: new Date().toISOString().split("T")[0]
+      joinDate: new Date().toISOString().split("T")[0],
+    };
+
+    // Update local state immediately
+    setTeamMembers([...teamMembers, newMember]);
+
+    // Save to Supabase
+    const { error } = await supabase.from("worshipteam_members").insert([newMember]);
+
+    if (error) {
+      console.error("Error inserting member into Supabase:", error.message);
+      return;
     }
-    setTeamMembers([...teamMembers, newMember])
-    setIsAddDialogOpen(false)
-    resetForm()
-  }
 
-  const handleEditMember = () => {
-    if (!editingMember) return
-    
-    setTeamMembers(teamMembers.map(member => 
-      member.id === editingMember.id 
-        ? { ...editingMember, ...formData }
-        : member
-    ))
-    setEditingMember(null)
-    resetForm()
-  }
+    setIsAddDialogOpen(false);
+    resetForm();
+  };
 
-  const handleDeleteMember = (id: string) => {
-    setTeamMembers(teamMembers.filter(member => member.id !== id))
-  }
+
+  const handleEditMember = async () => {
+    if (!editingMember) return;
+
+    const updatedMember = { ...editingMember, ...formData };
+
+    // Update Supabase
+    const { error } = await supabase
+      .from("worshipteam_members")
+      .update(updatedMember)
+      .eq("id", editingMember.id);
+
+    if (error) {
+      console.error("Error updating member in Supabase:", error.message);
+      return;
+    }
+
+    // Update local state
+    setTeamMembers(prev =>
+      prev.map(member =>
+        member.id === editingMember.id ? updatedMember : member
+      )
+    );
+
+    setEditingMember(null);
+    setIsEditingDialogOpen(false)
+    resetForm();
+  };
+
+
+  const handleDeleteMember = async (id: string) => {
+    // Optimistically update UI
+    setTeamMembers(prev => prev.filter(member => member.id !== id));
+
+    // Delete from Supabase
+    const { error } = await supabase
+      .from("worshipteam_members")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error deleting member from Supabase:", error.message);
+      // Optional: Rollback the local change if needed
+    }
+  };
+
 
   const openEditDialog = (member: TeamMember) => {
     setEditingMember(member)
@@ -191,7 +221,7 @@ export default function ManageTeam() {
                 </h1>
                 <p className="text-blue-200 mt-1">WON APASAN</p>
               </div>
-              
+
             </div>
 
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -359,7 +389,7 @@ export default function ManageTeam() {
                     <Calendar className="w-4 h-4" />
                     Joined {new Date(member.joinDate).toLocaleDateString()}
                   </div>
-                  
+
                   <div>
                     <p className="text-white text-sm font-medium mb-1">Instruments:</p>
                     <div className="flex flex-wrap gap-1">
@@ -384,7 +414,7 @@ export default function ManageTeam() {
                   )}
 
                   <div className="flex gap-2 pt-2">
-                    <Dialog>
+                    <Dialog open={isEditingDialogOpen} onOpenChange={setIsEditingDialogOpen}>
                       <DialogTrigger asChild>
                         <Button
                           variant="outline"
@@ -494,7 +524,7 @@ export default function ManageTeam() {
                           </div>
 
                           <div className="flex justify-end gap-2">
-                            <Button variant="outline" onClick={() => setEditingMember(null)}>
+                            <Button variant="outline" onClick={ () =>  setIsEditingDialogOpen(false)}>
                               Cancel
                             </Button>
                             <Button onClick={handleEditMember}>
