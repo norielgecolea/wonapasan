@@ -172,12 +172,12 @@ export default function ManageTeam() {
         <title>Manage Team - Worship Team Scheduler</title>
         <meta name="description" content="Manage your worship team members" />
       </Head>
-
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-        <div className="container mx-auto px-4 py-8">
+      {/* w-full max-w-screen-xl mx-auto px-4 py-8          */}
+      <div className="  overflow-hidden min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+        <div className="container mx-auto px-4 py-8 min-w-full">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
+          <div className="sm:flex block items-center justify-between mb-8">
+            <div className="sm:flex block items-center gap-4 ">
               <Link href="/">
                 <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
                   <ArrowLeft className="w-4 h-4 mr-2" />
@@ -189,14 +189,15 @@ export default function ManageTeam() {
                   <Users className="w-8 h-8" />
                   Manage Team
                 </h1>
-                <p className="text-blue-200 mt-1">Add, edit, and organize your worship team members</p>
+                <p className="text-blue-200 mt-1">WON APASAN</p>
               </div>
+              
             </div>
 
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  <Plus className="w-4 h-4 mr-2" />
+                <Button className="bg-blue-600 hover:bg-blue-700 mt-5 w-1/2 sm:w-36">
+                  <Plus className="w-4 h-4 mr-2 " />
                   Add Member
                 </Button>
               </DialogTrigger>
