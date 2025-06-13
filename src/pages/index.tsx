@@ -13,7 +13,7 @@ export default function Home() {
       <Head>
         <title>WON APASAN WORSHIP TEAM</title>
         <meta name="description" content="Church worship team scheduling system" />
-        <link rel="icon" href="/wonapasan/won_logo.png" />
+        <link rel="icon" href="/won_logo.png" />
       </Head>
 
       <main className="animate-gradientLoop bg-gradient-to-tr from-slate-900 via-blue-950 to-slate-900 bg-[length:200%_200%] overflow-hidden min-h-screen">
